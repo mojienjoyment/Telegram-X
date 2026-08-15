@@ -44,7 +44,7 @@ jobs:
       with:
         cmdline-tools-version: 9.0
         packages: >-
-          platforms;android-34
+          platforms;android-37
           platform-tools
           build-tools;34.0.0
     
@@ -107,10 +107,11 @@ jobs:
         echo "Date: $(date)" >> build-info.txt
         echo "Branch: ${GITHUB_REF_NAME}" >> build-info.txt
         echo "Commit: ${GITHUB_SHA}" >> build-info.txt
-        echo "Build Type: ${{ steps.build_type.outputs.type }}" >> build-info.txt
-        echo "Min SDK: Android 11 (API 30)" >> build-info.txt
-        echo "Target SDK: Android 14 (API 34)" >> build-info.txt
-        echo "Architecture: ARM64-v8a only" >> build-info.txt
+        echo \"Build Type: ${{ steps.build_type.outputs.type }}\" >> build-info.txt
+        echo \"Min SDK: Android 11 (API 30)\" >> build-info.txt
+        echo \"Target SDK: Android 17 (API 37)\" >> build-info.txt
+        echo \"Compile SDK: Android 17 (API 37)\" >> build-info.txt
+        echo \"Architecture: ARM64-v8a only\" >> build-info.txt
     
     - name: Upload Build Info
       uses: actions/upload-artifact@v4
