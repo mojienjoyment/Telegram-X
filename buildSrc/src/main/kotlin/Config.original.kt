@@ -20,23 +20,19 @@ import tgx.gradle.plugin.Keystore
 import java.util.*
 
 object Config {
-  // OPTIMIZED FOR MODERN DEVICES - ARM64 ONLY, ANDROID 8.0+
-  const val MIN_SDK_VERSION = 26  // Android 8.0 Oreo - Focus on modern devices
-  const val MIN_SDK_VERSION_HUAWEI = 26
+  const val MIN_SDK_VERSION = 16
+  const val MIN_SDK_VERSION_HUAWEI = 17
   val JAVA_VERSION = org.gradle.api.JavaVersion.VERSION_21
-  
   val ANDROIDX_MEDIA_EXTENSIONS = arrayOf(
     "decoder_ffmpeg",
     "decoder_flac",
     "decoder_opus",
     "decoder_vp9"
   )
-  
-  // ARM64-V8A ONLY - No legacy 32-bit support for smaller APK size and better performance
-  val SUPPORTED_ABI = arrayOf("arm64-v8a")
-  
-  // Using shared STL for better memory usage on modern devices
-  const val SHARED_STL = true
+  val SUPPORTED_ABI = arrayOf("armeabi-v7a", "arm64-v8a", "x86_64", "x86")
+
+  // FIXME(ndK): As of 16.08.2025, NDK team didn't release an update for r23's c++_shared.so with 16 KB ELF alignment
+  const val SHARED_STL = false
 }
 
 data class PullRequest (
@@ -97,11 +93,7 @@ data class ApplicationConfig(
   val keystore: Keystore?
 )
 
-data class AbiVariant(
-  val flavor: String, 
-  vararg val filters: String = arrayOf(), 
-  val displayName: String = filters[0]
-) {
+class AbiVariant (val flavor: String, vararg val filters: String = arrayOf(), val displayName: String = filters[0]) {
   init {
     if (filters.isEmpty())
       fatal("Empty filters passed")
@@ -122,16 +114,27 @@ data class AbiVariant(
     }
 
   val minSdk: Int
-    get() = 26  // All modern ABIs require at least API 26
+    get() = if (is64Bit) {
+      21
+    } else {
+      16
+    }
 }
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Abi {
-  const val ARM64_V8A = 0  // Only ARM64 - optimized build
+  const val UNIVERSAL = 0
+  const val ARMEABI_V7A = 1
+  const val ARM64_V8A = 2
+  const val X86 = 3
+  const val X64 = 4
 
-  // Single ABI configuration - ARM64 only
   val VARIANTS = mapOf(
-    Pair(ARM64_V8A, AbiVariant("arm64", "arm64-v8a"))
+    Pair(UNIVERSAL, AbiVariant("universal", displayName = "universal", filters = arrayOf("arm64-v8a", "armeabi-v7a"))),
+    Pair(ARMEABI_V7A, AbiVariant("arm32", "armeabi-v7a")),
+    Pair(ARM64_V8A, AbiVariant("arm64", "arm64-v8a")),
+    Pair(X86, AbiVariant("x86", "x86")),
+    Pair(X64, AbiVariant("x64", "x86_64", displayName = "x64"))
   )
 }
 
@@ -143,14 +146,30 @@ data class SdkVariant(
 )
 
 object Sdk {
-  const val LATEST = 0  // Only latest SDK flavor needed
+  const val LEGACY = 0
+  const val LOLLIPOP = 1
+  const val MARSHMALLOW = 2
+  const val LATEST = 3
 
-  // Single SDK variant - Android 8.0+ (API 26+)
-  // No legacy support for smaller codebase and modern features
   val VARIANTS = mapOf(
+    Pair(LEGACY, SdkVariant(
+      flavor = "legacy",
+      minSdk = 16,
+      maxSdk = 20
+    )),
+    Pair(LOLLIPOP, SdkVariant(
+      flavor = "lollipop",
+      minSdk = 21,
+      maxSdk = 22
+    )),
+    Pair(MARSHMALLOW, SdkVariant(
+      flavor = "marshmallow",
+      minSdk = 23,
+      maxSdk = 23
+    )),
     Pair(LATEST, SdkVariant(
       flavor = "latest",
-      minSdk = 26,
+      minSdk = 24,
       displayName = null
     ))
   )
