@@ -20,9 +20,9 @@ import tgx.gradle.plugin.Keystore
 import java.util.*
 
 object Config {
-  // OPTIMIZED FOR MODERN DEVICES - ARM64 ONLY, ANDROID 8.0+
-  const val MIN_SDK_VERSION = 26  // Android 8.0 Oreo - Focus on modern devices
-  const val MIN_SDK_VERSION_HUAWEI = 26
+  // OPTIMIZED FOR MODERN DEVICES - ARM64 ONLY, ANDROID 11+
+  const val MIN_SDK_VERSION = 30  // Android 11 (R) - Modern devices only, no legacy support
+  const val MIN_SDK_VERSION_HUAWEI = 30
   val JAVA_VERSION = org.gradle.api.JavaVersion.VERSION_21
   
   val ANDROIDX_MEDIA_EXTENSIONS = arrayOf(
@@ -122,7 +122,7 @@ data class AbiVariant(
     }
 
   val minSdk: Int
-    get() = 26  // All modern ABIs require at least API 26
+    get() = 30  // ARM64 on Android 11+ for modern features and optimizations
 }
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -145,12 +145,12 @@ data class SdkVariant(
 object Sdk {
   const val LATEST = 0  // Only latest SDK flavor needed
 
-  // Single SDK variant - Android 8.0+ (API 26+)
-  // No legacy support for smaller codebase and modern features
+  // Single SDK variant - Android 11+ (API 30+)
+  // No legacy support for smaller codebase and modern features only
   val VARIANTS = mapOf(
     Pair(LATEST, SdkVariant(
       flavor = "latest",
-      minSdk = 26,
+      minSdk = 30,
       displayName = null
     ))
   )
