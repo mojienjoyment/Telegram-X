@@ -81,8 +81,8 @@ jobs:
           assembleArm64LatestRelease \
           --no-daemon \
           --stacktrace \
-          -PminSdkVersion=26 \
-          -PtargetSdkVersion=35 \
+          -PminSdkVersion=30 \
+          -PtargetSdkVersion=37 \
           -PabiFilters="arm64-v8a"
 
     - name: Upload APK Artifact
