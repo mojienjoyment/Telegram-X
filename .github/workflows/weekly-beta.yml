@@ -33,7 +33,7 @@ jobs:
       with:
         cmdline-tools-version: 9.0
         packages: >-
-          platforms;android-34
+          platforms;android-37
           platform-tools
           build-tools;34.0.0
     

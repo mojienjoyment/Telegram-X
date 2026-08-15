@@ -24,6 +24,10 @@ object Config {
   const val MIN_SDK_VERSION = 30  // Android 11 (R) - Modern devices only, no legacy support
   const val MIN_SDK_VERSION_HUAWEI = 30
   val JAVA_VERSION = org.gradle.api.JavaVersion.VERSION_21
+
+  // Target Android 17 (API 37) for latest features and optimizations
+  const val TARGET_SDK_VERSION = 37  // Android 17
+  const val COMPILE_SDK_VERSION = 37  // Compile with Android 17 SDK
   
   val ANDROIDX_MEDIA_EXTENSIONS = arrayOf(
     "decoder_ffmpeg",
